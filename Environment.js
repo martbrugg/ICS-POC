@@ -1,6 +1,13 @@
 var Cell = require('./Cell');
 var process = require('process');
 
+
+/**
+ * Demo Component to Simulate an environment
+ * 
+ * @class Environment
+ * @extends {Cell}
+ */
 class Environment extends Cell {
     constructor(id, options) {
         super(id, options);
