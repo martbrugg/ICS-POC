@@ -7,21 +7,41 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceRoot}/test.js"
+            "name": "Worker1",
+            "program": "${workspaceRoot}/WorkerNode.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceRoot}/test.js"
+            "name": "Worker2",
+            "program": "${workspaceRoot}/WorkerNode.js",
+            "args": [
+                "TestWorker2"
+            ]
         },
         {
             "type": "node",
-            "request": "attach",
-            "name": "Attach to Process",
-            "address": "localhost",
-            "port": 5858
+            "request": "launch",
+            "name": "Manager",
+            "program": "${workspaceRoot}/Manager.js",
+            "externalConsole": true
+        },
+        {
+
+            "type": "node",
+            "request": "launch",
+            "name": "Manager 2",
+            "program": "${workspaceRoot}/Manager.js"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Single Worker",
+            "configurations": ["Manager", "Worker1"]
+        },
+        {
+            "name": "Multiple Worker",
+            "configurations": ["Manager", "Worker1", "Worker2"]
         }
     ]
 }

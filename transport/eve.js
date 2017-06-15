@@ -12,8 +12,6 @@ EveAgentTransport = function (id, options) {
     this._events = {};
     this.extend('request');
     this.connect(eve.system.transports.getAll());
-
-
 }
 EveAgentTransport.prototype = Object.create(eve.Agent.prototype);
 EveAgentTransport.prototype.constructor = EveAgentTransport;
@@ -22,7 +20,7 @@ EveAgentTransport.prototype.on = function(event, callback) {
     if (this._events[event] === undefined) {
         this._events[event] = [];
         var topic = this.id + "." + event
-        console.log(this.id, "subscribe to", topic)
+        //console.log(this.id, "subscribe to", topic)
     }
 
     this._events[event].push(callback);
@@ -51,7 +49,7 @@ EveAgentTransport.prototype.sendMessage = function(rec, type, message) {
     var d = JSON.stringify(data);
     var topic = rec + "." + type;
     this.send(rec,d);
-    console.log(this.id, "publish to", topic, message)
+    //console.log(this.id, "publish to", topic, message)
 };
 
 function _onError(err) {
@@ -62,14 +60,19 @@ function _onError(err) {
 
 EveAgentTransport.prototype.receive = function(from, message) {
     var data = JSON.parse(message);
-    console.log("receive Message", from, data);
+    //console.log("receive Message", from, data);
     var event = data.event;
 
     if (this._events[event] !== undefined) {
         var callbacks = this._events[event];
         for (var i = 0; i < callbacks.length; i++) {
-            var callback = callbacks[i];
-            callback.call(this, from, data.message);
+            try {
+                var callback = callbacks[i];
+                callback.call(this, from, data.message);
+            } catch (error) {
+                console.log("Error executing message Handler")
+            }
+            
             //callback(data.sender, data.message);
         }
     }
