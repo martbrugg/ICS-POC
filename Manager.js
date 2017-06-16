@@ -134,8 +134,22 @@ class Manager extends Cell {
             name: cmd[1],
             type: cmd[2]
         }
+
+        var options = this.parseOptions(cmd);
         //this.onCreateCell("Manager", data);
-        this.createChild(data.name, data.type);
+        this.createChild(data.name, data.type, options);
+    }
+
+    parseOptions(cmd) {
+        var options = {};
+        for(var i=3; i<cmd.length; i++) {
+            let opt = cmd[i].split('=');
+            if(opt.length === 2) {
+                options[opt[0]] = opt[1];
+            }
+        }
+
+        return options;
     }
 
 

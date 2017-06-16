@@ -21,12 +21,20 @@ class Cell {
         this.id = id;
         this.transport = new transport(id);
         this.childs = [];
-        if (this.parent !== undefined) {
-            this.sendMessage(this.parent, "ready", {})
-        }
+        this._childPromises = {};
+        
 
         this.on("remove", this.onChildRemoved.bind(this));
         this.on("ready", this.onChildReady.bind(this));
+        var self = this;
+        this.transport.ready.then(function() {
+            console.log("transport ready");
+            if (self.parent !== undefined) {
+            self.sendMessage(self.parent, "ready", {})
+            console.log(self.id, "ready");
+            self.ready();
+        }
+        });
     }
 
     _onError(err) {
@@ -94,9 +102,20 @@ class Cell {
             options: options || {}
 
         }
+        var self = this;
+        this._childPromises[name] = new Promise(function(resolve, reject) {
+            function readyHandler(from, data) {
+                //self.off("ready", readyHandler);
+                resolve(from);
+            }
+            self.on("ready", readyHandler);
+            
+        })
+
         data.options.parent = this.id;
         this.sendMessage("Manager", "createCell", data);
         this.childs.push(name);
+        return this._childPromises[name];
 
     }
 
@@ -126,6 +145,10 @@ class Cell {
      */
     onChildReady(from, data) {
         console.log("child ready", from);
+    }
+
+    ready() {
+
     }
 
     /**

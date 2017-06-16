@@ -56,7 +56,6 @@ EveAgentTransport.prototype.off = function(event, callback) {
         }
         if (this._events[event].length = 0) {
             delete this._events[event];
-            client.sub.unsubscribe(this.id + "." + event);
         }
 
     }
@@ -78,8 +77,9 @@ EveAgentTransport.prototype.sendMessage = function(rec, type, message) {
     };
     var d = JSON.stringify(data);
     var topic = rec + "." + type;
+    console.log(this.id, "publish to", rec, data.event);
     this.send(rec,d);
-    //console.log(this.id, "publish to", topic, message)
+    
 };
 
 function _onError(err) {
@@ -100,9 +100,9 @@ EveAgentTransport.prototype.receive = function(from, message) {
                 var callback = callbacks[i];
                 callback.call(this, from, data.message);
             } catch (error) {
-                console.log("Error executing message Handler")
+                console.log("Error executing message Handler", error);
             }
-            
+            //var callback = callbacks[i];
             //callback(data.sender, data.message);
         }
     }
