@@ -23,7 +23,7 @@ class Life extends Cell {
     }
     init() {
         console.log("GOL/Life", this.id, "ready");   
-        this.updateStatus();
+        //this.updateStatus();
     }
 
 
@@ -31,11 +31,11 @@ class Life extends Cell {
 
         if(data.interacting === true) {
             this.interacting = true;
-            this.sendMessage(partner, "exchange", this.value);
+            this.sendMessage(data.partner, "exchange", this.value);
         } else {
             this.interacting = false;
             this.value = this.newValue;
-            this.updateStatus();
+            //this.updateStatus();
         }     
         
         
@@ -56,7 +56,6 @@ class Life extends Cell {
     }
 
     destructor() {
-        clearInterval(this.watchdogInterval);
         super.destructor();
 
     }

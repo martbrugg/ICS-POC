@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/martbrugg/ICS-POC#readme",
   "dependencies": {
-    "redis": "^2.7.1",
-    "evejs": "0.5.0"
+    "evejs": "0.5.0",
+    "javascript-state-machine": "^3.0.1",
+    "redis": "^2.7.1"
   }
 }
