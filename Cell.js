@@ -17,21 +17,21 @@ class Cell {
         options = options || {};
         this.options = options;
         this.parent = options.parent;
-        console.log("Create Cell")
         this.id = id;
         this.transport = new transport(id);
         this.childs = [];
         this._childPromises = {};
+        console.log("Create Cell", id)
         
 
         this.on("remove", this.onChildRemoved.bind(this));
-        this.on("ready", this.onChildReady.bind(this));
+        //this.on("ready", this.onChildReady.bind(this));
         var self = this;
         this.transport.ready.then(function() {
-            console.log("transport ready");
+            //console.log("transport ready");
             if (self.parent !== undefined) {
             self.sendMessage(self.parent, "ready", {})
-            console.log(self.id, "ready");
+            //console.log(self.id, "ready");
             self.ready();
         }
         });
@@ -144,7 +144,7 @@ class Cell {
      * @memberof Cell
      */
     onChildReady(from, data) {
-        console.log("child ready", from);
+        //console.log("child ready", from);
     }
 
     ready() {
