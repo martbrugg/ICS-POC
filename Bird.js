@@ -13,7 +13,7 @@ class Life extends Cell {
         super(id, options);
         
         this.interacting = false;
-        options.size = options.size || 1;
+        options.size = Math.max(options.size, 1);
         this.value = Math.random() * 1000 * options.size;
         this.on("communicate", this.onCommunicate.bind(this));
         this.on("exchange", this.onExchange.bind(this));

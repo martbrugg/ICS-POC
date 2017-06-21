@@ -1,6 +1,8 @@
 
-var redis = require("redis"),
-    transport = require("./transport/eve.js")
+var transport = require("./transport/eve.js");
+var config = require("./config/config");
+//var Parameter = require("./Parameter");
+
 
 
 /**
@@ -22,20 +24,24 @@ class Cell {
         this.childs = [];
         this._childPromises = {};
         console.log("Create Cell", id)
-        
+
 
         this.on("remove", this.onChildRemoved.bind(this));
         //this.on("ready", this.onChildReady.bind(this));
         var self = this;
-        this.transport.ready.then(function() {
+
+        this.transport.ready.then(function () {
             //console.log("transport ready");
             if (self.parent !== undefined) {
-            self.sendMessage(self.parent, "ready", {})
-            //console.log(self.id, "ready");
-            self.ready();
-        }
+                self.sendMessage(self.parent, "ready", {})
+                //console.log(self.id, "ready");
+                self.ready();
+            }
+
+            //self.idParam = new Parameter("test", self);
         });
     }
+
 
     _onError(err) {
         console.log("Error " + err);
@@ -95,7 +101,7 @@ class Cell {
      * 
      * @memberof Cell
      */
-    createChild(name, type, options) {
+    async createChild(name, type, options) {
         var data = {
             name: name,
             type: type,
@@ -103,13 +109,13 @@ class Cell {
 
         }
         var self = this;
-        this._childPromises[name] = new Promise(function(resolve, reject) {
+        this._childPromises[name] = new Promise(function (resolve, reject) {
             function readyHandler(from, data) {
                 //self.off("ready", readyHandler);
                 resolve(from);
             }
             self.on("ready", readyHandler);
-            
+
         })
 
         data.options.parent = this.id;

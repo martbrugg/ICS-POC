@@ -1,6 +1,8 @@
 var Cell = require('./Cell');
 var process = require('process');
 var StateMachine = require('javascript-state-machine');
+var fs = require("fs");
+var csvWriter = require('csv-write-stream');
 
 
 /**
@@ -26,7 +28,7 @@ class Env extends Cell {
                 { name: 'toResetInteraction', from: 'chooseBirds', to: 'resetInteraction' },
                 { name: 'toCalcAverage', from: 'resetInteraction', to: 'calcAverage' },
                 { name: 'toCreateAdditionalBird', from: 'calcAverage', to: 'createAdditionalBird' }
-                
+
             ],
             methods: {
                 onInitialBirds: this.onInitialBirds.bind(this),
@@ -41,12 +43,8 @@ class Env extends Cell {
     }
     init() {
         var self = this;
-        //console.log("GOL/Env", this.id, "ready");
-        /*this.createChilds(2).then(function(d) {
-                console.log("childs ready", d);
-                self.chooseRandomBirds();
-        });*/
-        //console.log("state", this.fsm.state);
+        this.count = 0;
+        this.log = [];
         this.fsm.initialBirds();
         //this.fsm.chooseBird();
 
@@ -58,7 +56,7 @@ class Env extends Cell {
         self.birds = [];
         this.createChilds(2).then(function (d) {
             console.log("XX childs ready", d);
-            
+
             console.log("state", self.fsm.state);
             //self.fsm.startInteraction(birds);
             self.fsm.toChooseBirds();
@@ -73,7 +71,7 @@ class Env extends Cell {
 
         this.createChilds(1).then(function (d) {
             console.log("XX childs ready", d);
-            
+
             console.log("state", self.fsm.state);
             //self.fsm.startInteraction(birds);
             self.fsm.toChooseBirds();
@@ -113,7 +111,7 @@ class Env extends Cell {
         var error = 0;
         keys.forEach(function (element) {
             let ch = this.birdStates[element]
-            console.log(ch);
+            //console.log(ch);
             sum += ch.value;
         }, this);
         var avg = (sum / keys.length)
@@ -126,31 +124,59 @@ class Env extends Cell {
         }, this);
         console.log("error", error);
 
+        var logEntry = [
+            this.count++,
+            avg,
+            error,
+            this.childs.length
+        ];
+
+        //this._db[this.id].log.push(logEntry);
+        //var log = this.settings.log;
+        this.log.push(logEntry);
+        //this.settings.log = log;
+
+
+
         var random = Math.random();
+        if(this.childs.length > 15 && error < keys.length) {
+            console.log("30 Birds Stop Simulation")
+            var writer = csvWriter({headers: ["cycle", "avg", "error", "childs"]});
+            writer.pipe(fs.createWriteStream('out' + Date.now() + '.csv'))
+
+            this.log.forEach(function (elem) {
+                writer.write(elem);
+                
+            })
+            writer.end();
+            return;
+        }
         if (error < keys.length && random > 0.5) {
             console.log("create new Bird", random);
-            setTimeout(function() {
+            setTimeout(function () {
                 self.fsm.toCreateAdditionalBird();
-            }, 1000);
-            
+            }, 10);
+
 
         } else {
             console.log("error to big", error, "random", random);
-            setTimeout(function() {
+            setTimeout(function () {
                 self.fsm.toChooseBirds();
-            }, 1000);
-            
+            }, 10);
+
         }
+
+        
 
 
     }
 
-    createChilds(n) {
+    async createChilds(n) {
         var test = [];
         var offset = this.childs.length;
         for (var i = 0; i < n; i++) {
             let childName = this.id + '_Bird' + (offset + i);
-            test.push(this.createChild(childName, 'Bird'))
+            test.push(this.createChild(childName, 'Bird', {size: offset}))
         }
 
         return Promise.all(test)

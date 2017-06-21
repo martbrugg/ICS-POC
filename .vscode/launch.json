@@ -24,7 +24,7 @@
             "request": "launch",
             "name": "Manager",
             "program": "${workspaceRoot}/Manager.js",
-            "externalConsole": true
+            "console": "externalTerminal"
         },
         {
 
