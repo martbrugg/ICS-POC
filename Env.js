@@ -166,9 +166,6 @@ class Env extends Cell {
 
         }
 
-        
-
-
     }
 
     async createChilds(n) {
