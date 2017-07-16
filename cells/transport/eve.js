@@ -1,5 +1,5 @@
 var eve = require("evejs"),
-    config = require("../config/config.js")
+    config = require("../../config/config.js")
 
 eve.system.init({
     transports: config.transports

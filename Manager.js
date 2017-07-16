@@ -1,11 +1,16 @@
 var process = require('process');
-var Cell = require('./Cell');
+var Cell = require('./cells/Cell');
 const readline = require('readline');
+
+const express = require('express')
+const app = express()
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
+
+const WebSocket = require('ws');
 
 
 
@@ -70,6 +75,7 @@ class Manager extends Cell {
      */
     onCellsCreated(from, data) {
         this.nodes[from].cells = data;
+        updateNodes();
     }
 
     /**
@@ -84,6 +90,7 @@ class Manager extends Cell {
         if (this.nodes[from] !== undefined) {
             this.nodes[from].cells = data;
         }
+        updateNodes();
 
     }
 
@@ -216,3 +223,37 @@ function _onInput(text) {
 }
 
 var manager = new Manager();
+
+app.get('/', function (req, res) {
+  res.sendfile("./vis/index.html")
+})
+
+app.use(express.static('vis'));
+
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!')
+})
+
+const wss = new WebSocket.Server({ port: 8080 });
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+  var data = JSON.stringify({type: "nodes", data: manager.nodes});
+  ws.send(data);
+});
+
+updateNodes = function() {
+    var data = JSON.stringify({type: "nodes", data: manager.nodes});
+    broadCastMessage(data);
+}
+
+broadCastMessage = function(data) {
+    wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+
+}

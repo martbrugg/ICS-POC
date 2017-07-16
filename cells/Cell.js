@@ -1,7 +1,9 @@
 
 var transport = require("./transport/eve.js");
-var config = require("./config/config");
-//var Parameter = require("./Parameter");
+var config = require("../config/config");
+
+
+
 
 
 
@@ -24,11 +26,26 @@ class Cell {
         this.childs = [];
         this._childPromises = {};
         console.log("Create Cell", id)
+        
+        /**this.settings = gun.get(this.id);
+        
+        this.settings.on(function(data,key) {
+            console.log("on", key, data);
+        })
+        
+        gun.get(this.id + '_childs').map(function() {
+            console.log("childs", arguments)
+        })
+        this.settings.put({id: this.id});
+        var test = this.settings.get("id").on(function(data,key) {
+            console.log("test", data, key);
+        });**/
 
-
+        
         this.on("remove", this.onChildRemoved.bind(this));
-        //this.on("ready", this.onChildReady.bind(this));
+        this.on("ready", this.onChildReady.bind(this));
         var self = this;
+
 
         this.transport.ready.then(function () {
             //console.log("transport ready");
@@ -151,6 +168,9 @@ class Cell {
      */
     onChildReady(from, data) {
         //console.log("child ready", from);
+        //var ref = gun.get(from);
+        //gun.get(this.id + '_childs').set(ref);
+        
     }
 
     ready() {

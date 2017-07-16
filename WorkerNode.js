@@ -1,4 +1,4 @@
-var Cell = require('./Cell');
+var Cell = require('./cells/Cell');
 var process = require('process');
 
 
@@ -52,7 +52,7 @@ class WorkerNode extends Cell {
         console.log("create cell from:", from, "data:", data )
         
         if(data.type !== undefined) {
-            ClassType = require('./' + data.type);
+            ClassType = require('./cells/' + data.type);
         }
         if(ClassType !== undefined) {
             item = {
