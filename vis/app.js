@@ -64,10 +64,11 @@ var app = {
 
   createCellNetwork(data) {
     var worker = Object.keys(data);
-    var nodes = [{
-      id: 'Manager', label: 'Manager'
-    }];
+    var nodes = [
+      //{ id: 'Manager', label: 'Manager', group: "Manager"}
+    ];
     var edges = [];
+    var groups = {};
 
     for (var i = 0; i < worker.length; i++) {
       var cells = data[worker[i]].cells;
@@ -75,9 +76,15 @@ var app = {
       for (var j = 0; j < cells.length; j++) {
         nodes.push({
           id: cells[j].name,
-          label: cells[j].type + ':' + cells[j].name
+          label: cells[j].name,
+          group: cells[j].type
         })
         edges.push({ from: cells[j].options.parent, to: cells[j].name })
+        /*if (groups[cells[j].type] === undefined) {
+          groups[cells[j].type] = {
+            color: { background: randomColor() }
+          }
+        }*/
       }
 
 
@@ -91,11 +98,24 @@ var app = {
       edges: edges
     };
     var options = {
-      /*layout: {
-        hierarchical: {
-          direction: 'LR'
-        }
-      }*/
+      nodes: {
+        shape: 'dot',
+        size: 30,
+        font: {
+          size: 12,
+          color: '#000000'
+        },
+        borderWidth: 2
+      },
+      edges: {
+        width: 2
+      },
+      groups: groups,
+      layout: {
+        /*hierarchical: {
+          //direction: 'UD'
+        }*/
+      }
     };
 
     // initialize your network!

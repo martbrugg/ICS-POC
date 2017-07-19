@@ -9,19 +9,29 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
+    <title>ICS Management Console</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="libs/vis.min.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+        crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
     <script src="libs/jquery-3.2.1.min.js"></script>
     <script src="libs/sigma.js"></script>
     <script src="libs/vis.min.js"></script>
+    <script src="libs/randomColor.js"></script>
     <script src="app.js"></script>
     <style>
         .network {
-            width: 600px;
             height: 400px;
-            border: 1px solid lightgray;
         }
     </style>
 </head>
@@ -30,11 +40,52 @@
     <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-    <div>
-        hello world
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+                <a class="navbar-brand" href="#">ICS Management Console</a>
+            </div>
+            <!--<div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>-->
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Worker Nodes</div>
+                    <div class="panel-body">
+                        <div id="workernetwork" class="network"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Cell Nodes</div>
+                    <div class="panel-body">
+                        <div id="cellnetwork" class="network"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+       
     </div>
-    <div id="workernetwork" class="network"></div>
-    <div id="cellnetwork" class="network"></div>
     <script>
         $(document).ready(function () {
             console.log("ready");
