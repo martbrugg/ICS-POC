@@ -1,0 +1,48 @@
+version: '2'
+services:
+  broker: 
+    image: "rabbitmq:3-management-alpine"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  manager:
+    image: "martbrugg/ics-manager"
+    environment:
+      - AMQP_HOST=amqp://broker:5672
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+    links: 
+      - broker
+    depends_on: 
+      - broker
+  worker1: 
+    image: "martbrugg/ics-worker"
+    environment:
+      - AMQP_HOST=amqp://broker:5672
+      - WORKER_ID=Worker1
+    links: 
+      - broker
+    depends_on: 
+      - broker
+      - manager
+  worker2: 
+    image: "martbrugg/ics-worker"
+    environment:
+      - AMQP_HOST=amqp://broker:5672
+      - WORKER_ID=Worker2
+    links: 
+      - broker
+    depends_on: 
+      - broker
+      - manager
+  worker3: 
+    image: "martbrugg/ics-worker"
+    environment:
+      - AMQP_HOST=amqp://broker:5672
+      - WORKER_ID=Worker3
+    links: 
+      - broker
+    depends_on: 
+      - broker
+      - manager

@@ -239,10 +239,21 @@ const wss = new WebSocket.Server({ port: 8080 });
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
+    onMessage(JSON.parse(message));
   });
   var data = JSON.stringify({type: "nodes", data: manager.nodes});
   ws.send(data);
 });
+
+onMessage = function(message) {
+
+    switch (message.type) {
+        case 'cmd':
+            _onInput.apply(manager, [message.data]);
+            break;
+    }
+
+}
 
 updateNodes = function() {
     var data = JSON.stringify({type: "nodes", data: manager.nodes});

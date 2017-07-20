@@ -139,7 +139,7 @@ class Env extends Cell {
 
 
         var random = Math.random();
-        if(this.childs.length > 15 && error < keys.length) {
+        if(this.childs.length > 30 && error < keys.length) {
             console.log("30 Birds Stop Simulation")
             var writer = csvWriter({headers: ["cycle", "avg", "error", "childs"]});
             writer.pipe(fs.createWriteStream('out' + Date.now() + '.csv'))

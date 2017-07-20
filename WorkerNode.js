@@ -105,7 +105,8 @@ class WorkerNode extends Cell {
 }
 var args = process.argv
 
-var workerId = "TestWorker"
+var workerId = process.env.WORKER_ID || "TestWorker";
+
 
 if(args.length > 2) {
     workerId = args[2];

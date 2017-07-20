@@ -1,0 +1,3 @@
+FROM martbrugg/ics-manager
+
+CMD [ "node", "WorkerNode.js" ]

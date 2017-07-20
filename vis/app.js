@@ -9,6 +9,22 @@ var app = {
     app.ws.onmessage = app.onmessage;
     //app.createNetwork();
 
+    $('#commandInput').keypress(function (e) {
+      if (e.which == 13) {
+        var command = $('#commandInput').val();
+        if(command.length >0) {
+          console.log("submit command", command);
+          var msg = {
+            type: "cmd",
+            data: command
+          }
+          app.ws.send(JSON.stringify(msg));
+        }
+        
+      }
+    });
+
+
   },
 
   onmessage: function (e) {
