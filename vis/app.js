@@ -12,7 +12,7 @@ var app = {
     $('#commandInput').keypress(function (e) {
       if (e.which == 13) {
         var command = $('#commandInput').val();
-        if(command.length >0) {
+        if (command.length > 0) {
           console.log("submit command", command);
           var msg = {
             type: "cmd",
@@ -20,7 +20,7 @@ var app = {
           }
           app.ws.send(JSON.stringify(msg));
         }
-        
+
       }
     });
 
@@ -28,17 +28,17 @@ var app = {
   },
 
   onmessage: function (e) {
-    console.log("new Message");
+    //console.log("new Message");
     var msg = JSON.parse(e.data);
-    console.log(msg);
+    //console.log(msg);
     switch (msg.type) {
       case "nodes":
         app.createWorkerNetwork(msg.data);
         app.createCellNetwork(msg.data);
-
         break;
 
-      default:
+      case "logMessage":
+        console.log(msg.data);
         break;
     }
   },
@@ -80,32 +80,47 @@ var app = {
 
   createCellNetwork(data) {
     var worker = Object.keys(data);
+    var index = {};
     var nodes = [
-      //{ id: 'Manager', label: 'Manager', group: "Manager"}
+      { id: 0, label: 'Manager', group: "Manager" }
     ];
+    index['Manager'] = 0;
     var edges = [];
     var groups = {};
-
+    var id = 1;
     for (var i = 0; i < worker.length; i++) {
       var cells = data[worker[i]].cells;
 
       for (var j = 0; j < cells.length; j++) {
+        index[cells[j].name] = id;
         nodes.push({
-          id: cells[j].name,
+          id: id++,
           label: cells[j].name,
           group: cells[j].type
         })
-        edges.push({ from: cells[j].options.parent, to: cells[j].name })
+        //edges.push({ from: cells[j].name , to: cells[j].options.parent})
         /*if (groups[cells[j].type] === undefined) {
           groups[cells[j].type] = {
             color: { background: randomColor() }
           }
         }*/
       }
+    }
+
+    for (var i = 0; i < worker.length; i++) {
+      var cells = data[worker[i]].cells;
+
+      for (var j = 0; j < cells.length; j++) {
+
+        edges.push({ from: index[cells[j].options.parent], to: index[cells[j].name] })
+      }
 
 
     }
-
+    edges.sort(function (a,b) {
+      return a.from - b.from;
+      
+    })
     var container = document.getElementById('cellnetwork');
 
     // provide the data in the vis format
@@ -128,9 +143,9 @@ var app = {
       },
       groups: groups,
       layout: {
-        /*hierarchical: {
-          //direction: 'UD'
-        }*/
+        hierarchical: {
+          sortMethod: 'directed'
+        }
       }
     };
 

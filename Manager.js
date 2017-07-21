@@ -31,6 +31,7 @@ class Manager extends Cell {
         this.on("createCell", this.onCreateCell.bind(this));
         this.on("deleteCell", this.onDeleteCell.bind(this));
         this.on("error", this.onError.bind(this));
+        this.on("logMessage", this.onLogMessage.bind(this));
         rl.question('Enter command: ', _onInput.bind(this));
 
     }
@@ -193,6 +194,15 @@ class Manager extends Cell {
             name: cmd[1]
         }
         this.onDeleteCell("Manager", data);
+    }
+
+    onLogMessage(from, data) {
+        var msg = {
+            type: 'logMessage',
+            data: from + ': ' + data,
+        }
+
+        broadCastMessage(JSON.stringify(msg));
     }
 
 

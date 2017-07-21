@@ -17,6 +17,7 @@ class Env extends Cell {
         this.birdStates = {};
         this.birds = [];
         this.updateCounter = 0;
+        this.max = parseInt(options.max || 10);
         this.on("updateStatus", this.onUpdateStatus.bind(this));
         this.fsm = new StateMachine({
             init: 'init',
@@ -81,6 +82,7 @@ class Env extends Cell {
 
     onChooseBirds() {
         console.log("chooseBirds");
+        //this.logMessage("chooseBirds");
         var self = this;
         self.birds = self.chooseRandomBirds();
         self.updateCounter = 0;
@@ -139,8 +141,8 @@ class Env extends Cell {
 
 
         var random = Math.random();
-        if(this.childs.length > 30 && error < keys.length) {
-            console.log("30 Birds Stop Simulation")
+        if(this.childs.length > this.max && error < keys.length) {
+            console.log(this.max + " Birds Stop Simulation")
             var writer = csvWriter({headers: ["cycle", "avg", "error", "childs"]});
             writer.pipe(fs.createWriteStream('out' + Date.now() + '.csv'))
 
@@ -174,6 +176,7 @@ class Env extends Cell {
         for (var i = 0; i < n; i++) {
             let childName = this.id + '_Bird' + (offset + i);
             test.push(this.createChild(childName, 'Bird', {size: offset}))
+            this.logMessage('create bird', childName);
         }
 
         return Promise.all(test)

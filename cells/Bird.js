@@ -18,6 +18,8 @@ class Life extends Cell {
         this.on("communicate", this.onCommunicate.bind(this));
         this.on("exchange", this.onExchange.bind(this));
         this.init();
+        this.settings.a = "test"
+        console.log(this.settings.a);
         
 
     }

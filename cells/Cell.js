@@ -3,10 +3,6 @@ var transport = require("./transport/eve.js");
 var config = require("../config/config");
 
 
-
-
-
-
 /**
  * Base Class for a Cell
  * Every further Component is inherited by this cell
@@ -25,23 +21,21 @@ class Cell {
         this.transport = new transport(id);
         this.childs = [];
         this._childPromises = {};
-        console.log("Create Cell", id)
-        
-        /**this.settings = gun.get(this.id);
-        
-        this.settings.on(function(data,key) {
-            console.log("on", key, data);
-        })
-        
-        gun.get(this.id + '_childs').map(function() {
-            console.log("childs", arguments)
-        })
-        this.settings.put({id: this.id});
-        var test = this.settings.get("id").on(function(data,key) {
-            console.log("test", data, key);
-        });**/
 
-        
+        console.log("Create Cell", id)
+
+        this.settings = new Proxy({}, {
+            set: function (obj, prop, value) {
+                console.log("set", prop, 'to', value, "in Settings");
+                Reflect.set(obj, prop, value);
+                return true;
+            },
+            get: function (target, name) {
+                console.log("read", name, "from settings")
+                return target[name];
+            }
+        });
+
         this.on("remove", this.onChildRemoved.bind(this));
         this.on("ready", this.onChildReady.bind(this));
         var self = this;
@@ -108,6 +102,10 @@ class Cell {
         this.transport.sendMessage(rec, type, message);
     };
 
+    logMessage() {
+        this.sendMessage('Manager', 'logMessage', Array.prototype.join.call(arguments, ' '));
+    }
+
 
     /**
      * Create a new Child Cell
@@ -170,7 +168,7 @@ class Cell {
         //console.log("child ready", from);
         //var ref = gun.get(from);
         //gun.get(this.id + '_childs').set(ref);
-        
+
     }
 
     ready() {
