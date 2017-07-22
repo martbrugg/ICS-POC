@@ -182,8 +182,11 @@ class Cell {
      * @memberof Cell
      */
     destructor() {
+        console.log(this.id, "desctructor; childs", this.childs)
         for (let i = 0; i < this.childs.length; i++) {
+            
             this.sendMessage("Manager", "deleteCell", { name: this.childs[i] });
+            console.log("XXX deleteCell", this.childs[i]);
         }
         if (this.parent !== undefined) {
             this.sendMessage(this.parent, "remove", {});

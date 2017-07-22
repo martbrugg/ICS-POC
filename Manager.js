@@ -50,6 +50,7 @@ class Manager extends Cell {
         if (this.nodes[from] === undefined) {
             this.nodes[from] = data;
             this.nodes[from].cells = this.nodes[from].cells || [];
+            updateNodes();
         }
     }
     /**
@@ -63,7 +64,7 @@ class Manager extends Cell {
     disconnect(from, data) {
         console.log("disconnect", from, data);
         delete this.nodes[from];
-
+        updateNodes();
     }
 
     /**

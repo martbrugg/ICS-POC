@@ -19,7 +19,7 @@ class Holon extends Cell {
     init() {
 
         if(this.options.level < this.options.max) {
-            var n = parseInt(Math.random() * 5) + 1;
+            var n = parseInt(Math.random() * 2) + 1;
             this.createChilds(n);
         }
         

@@ -1,5 +1,7 @@
 var Cell = require('./cells/Cell');
 var process = require('process');
+const fs = require('fs');
+const child_process = require('child-process-debug');
 
 
 /**
@@ -37,6 +39,10 @@ class WorkerNode extends Cell {
         }, 1000);
     }
 
+    disconnect() {
+        this.sendMessage("Manager", "disconnect")
+    }
+
 
     /**
      * Create a new Cell on the node
@@ -49,30 +55,46 @@ class WorkerNode extends Cell {
     createCell(from, data) {
         var ClassType;
         var item = {};
-        console.log("create cell from:", from, "data:", data )
-        
-        if(data.type !== undefined) {
+        console.log("create cell from:", from, "data:", data)
+
+        if (data.type !== undefined) {
             ClassType = require('./cells/' + data.type);
         }
-        if(ClassType !== undefined) {
+        if (ClassType !== undefined) {
+            //const ch_proc = fork(`${__dirname}/CellLoader.js`);
+            var ch_proc = child_process.fork("CellLoader.js");
+            //var ch_proc = child_process.fork("forkTest/support.js");
             item = {
                 name: data.name,
                 type: data.type,
-                instance: new ClassType(data.name, data.options)
+                //instance: new ClassType(data.name, data.options),
+                proc: ch_proc
             }
-            this.cells.push(data)
-            this.instances.push(item);
-            this.sendMessage("Manager", "cellCreated", this.cells)
+            var self = this
+            ch_proc.on('message', function (msg) {
+                console.log('Message from child', msg);
+                if(msg.success === true) {
+                    console.log('created')
+                    self.cells.push(data)
+                    self.instances.push(item);
+                    self.sendMessage("Manager", "cellCreated", self.cells)
+                }
+            })
+
+            ch_proc.send({ cmd: 'create', name: data.name, type: data.type, options: data.options });
+            //this.cells.push(data)
+            //this.instances.push(item);
+            //this.sendMessage("Manager", "cellCreated", this.cells)
         }
 
         else {
             this.sendMessage("Manager", "error", "Error createing node")
         }
 
-       
-        
 
-        
+
+
+
     }
 
 
@@ -85,30 +107,40 @@ class WorkerNode extends Cell {
      * @memberof WorkerNode
      */
     deleteCell(from, data) {
-        console.log("delete cell from:", from, "data:", data )
-        this.cells = this.cells.filter(function(el, index) {
+        console.log("delete cell from:", from, "data:", data)
+        this.cells = this.cells.filter(function (el, index) {
             return el.name !== data
         })
 
-        for(let i=0; i<this.instances.length; i++) {
-            if(this.instances[i].name === data) {
-                this.instances[i].instance.destructor();
-                delete this.instances[i].instance;
-                this.instances[i].instance = undefined;
-                this.instances.splice(i,1);
+        for (let i = 0; i < this.instances.length; i++) {
+            if (this.instances[i].name === data) {
+                //this.instances[i].instance.destructor();
+                //delete this.instances[i].instance;
+                this.instances[i].proc.send({ cmd: 'delete'});
+                //this.instances[i].instance = undefined;
+                this.instances.splice(i, 1);
             }
         }
         this.sendMessage("Manager", "cellDeleted", this.cells)
     }
 
-     
+
 }
 var args = process.argv
 
 var workerId = process.env.WORKER_ID || "TestWorker";
 
 
-if(args.length > 2) {
+if (args.length > 2) {
     workerId = args[2];
 }
 var myNode = new WorkerNode(workerId)
+
+process.on('SIGINT', function() {
+    console.log("Caught interrupt signal");
+    myNode.disconnect();
+    setTimeout(function() {
+        process.exit();
+    },500);
+    
+});
