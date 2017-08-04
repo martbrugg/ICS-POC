@@ -15,6 +15,7 @@ class Cell {
 
     constructor(id, options) {
         options = options || {};
+        //Adoption of Options, Id and Parent
         this.options = options;
         this.parent = options.parent;
         this.id = id;
@@ -24,23 +25,12 @@ class Cell {
 
         console.log("Create Cell", id)
 
-        this.settings = new Proxy({}, {
-            set: function (obj, prop, value) {
-                console.log("set", prop, 'to', value, "in Settings");
-                Reflect.set(obj, prop, value);
-                return true;
-            },
-            get: function (target, name) {
-                console.log("read", name, "from settings")
-                return target[name];
-            }
-        });
-
+        //Subscribe to Messages from Type "remove" and "ready"
         this.on("remove", this.onChildRemoved.bind(this));
         this.on("ready", this.onChildReady.bind(this));
         var self = this;
 
-
+        //Initialize Transport
         this.transport.ready.then(function () {
             //console.log("transport ready");
             if (self.parent !== undefined) {
@@ -48,8 +38,6 @@ class Cell {
                 //console.log(self.id, "ready");
                 self.ready();
             }
-
-            //self.idParam = new Parameter("test", self);
         });
     }
 

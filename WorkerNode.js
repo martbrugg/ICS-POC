@@ -60,34 +60,39 @@ class WorkerNode extends Cell {
         if (data.type !== undefined) {
             ClassType = require('./cells/' + data.type);
         }
+
+        //Check if Type is available
         if (ClassType !== undefined) {
-            //const ch_proc = fork(`${__dirname}/CellLoader.js`);
+            //Creation of child process
             var ch_proc = child_process.fork("CellLoader.js");
-            //var ch_proc = child_process.fork("forkTest/support.js");
+            //Saving of of the reference
             item = {
                 name: data.name,
                 type: data.type,
-                //instance: new ClassType(data.name, data.options),
                 proc: ch_proc
             }
             var self = this
+
+            //Messaging interface to communicate with the childprocess
             ch_proc.on('message', function (msg) {
                 console.log('Message from child', msg);
+                //Component ready
                 if(msg.success === true) {
                     console.log('created')
+                    //save refernces
                     self.cells.push(data)
                     self.instances.push(item);
+                    //notify Manager of successfull creation
                     self.sendMessage("Manager", "cellCreated", self.cells)
                 }
             })
 
+            //send message to initialize the component with parameters id, type and options
             ch_proc.send({ cmd: 'create', name: data.name, type: data.type, options: data.options });
-            //this.cells.push(data)
-            //this.instances.push(item);
-            //this.sendMessage("Manager", "cellCreated", this.cells)
         }
 
         else {
+            //send Errormessage to Manager
             this.sendMessage("Manager", "error", "Error createing node")
         }
 
