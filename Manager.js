@@ -1,6 +1,8 @@
 var process = require('process');
 var Cell = require('./cells/Cell');
 const readline = require('readline');
+const moment = require('moment');
+var fs = require('fs');
 
 const express = require('express')
 const app = express()
@@ -33,6 +35,12 @@ class Manager extends Cell {
         this.on("error", this.onError.bind(this));
         this.on("logMessage", this.onLogMessage.bind(this));
         rl.question('Enter command: ', _onInput.bind(this));
+
+        var fileName = './logs/' + moment().format('YYYYMMDD_HHmmss') + '.log';
+        this.logger = fs.createWriteStream(fileName, {
+            flags: 'a'
+        });
+
 
     }
 
@@ -200,8 +208,15 @@ class Manager extends Cell {
     onLogMessage(from, data) {
         var msg = {
             type: 'logMessage',
-            data: from + ': ' + data,
+            data: moment().format('HH:mm:ss.SS') + ' ' + from + ': ' + data,
         }
+
+        try {
+            this.logger.write(msg.data + '\n');
+        } catch (error) {
+            console.log(error);
+        }
+        
 
         broadCastMessage(JSON.stringify(msg));
     }

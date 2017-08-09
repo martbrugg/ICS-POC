@@ -26,6 +26,7 @@
     "rethinkdb": "^2.3.3",
     "express": "^4.15.3",
     "ws": "^3.0.0",
-    "child-process-debug": "^0.0.7"
+    "child-process-debug": "^0.0.7",
+    "moment": "^2.18.1"
   }
 }

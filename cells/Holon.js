@@ -15,9 +15,10 @@ class Holon extends Cell {
         this.options.max = this.options.max || 3;
         this.options.level = this.options.level || 0;
         
+        
     }
     init() {
-
+        this.logMessage('created');
         if(this.options.level < this.options.max) {
             var n = parseInt(Math.random() * 2) + 1;
             this.createChilds(n);
@@ -36,7 +37,6 @@ class Holon extends Cell {
         for (var i = 0; i < n; i++) {
             let childName = this.id + '_' + (offset + i);
             test.push(this.createChild(childName, 'Holon', {max: this.options.max, level: this.options.level + 1}))
-            this.logMessage('create Holon', childName);
         }
 
         return Promise.all(test)
