@@ -3,8 +3,9 @@ Interaction Computing System Proof of Concept
 
 
 ## Installation
+install NodeJS >= V8.0.0 https://nodejs.org/en/download/current/
 
-switch to the folder and type `npm install`
+open terminal switch to the folder and type `npm install`
 
 ## Configuration
 
@@ -24,9 +25,9 @@ Message Broker are available via:
 
 ## Startup
 
-1) to start the Manager type `node Manager.js`
+1) to start the Manager open terminal and type `node Manager.js`
 
-2) to start the Worker type `node WorkerNode.js <WORKER_ID>`
+2) to start the Worker open terminal and type `node WorkerNode.js <WORKER_ID>`
 
 3) to open the management console open a browser with url `http://<MANAGER_HOST>:3000`
 
